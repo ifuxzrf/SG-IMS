@@ -15,14 +15,24 @@ const STATUS_CLASS = {
   缺货: 'danger',
 }
 
+const APP_VERSION = 'v0.1.1'
+const SITE_URL = 'https://sgims.huozzz1123.top'
+
 function formatTime(date) {
   return date.toLocaleString('zh-CN', { hour12: false })
+}
+
+function qtyClass(qty) {
+  if (qty === 0) return 'qty-zero'
+  if (qty < 20) return 'qty-low'
+  return ''
 }
 
 export default function App() {
   const [query, setQuery] = useState('')
   const [pingCount, setPingCount] = useState(0)
   const [lastPing, setLastPing] = useState(null)
+  const [pinging, setPinging] = useState(false)
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -42,8 +52,13 @@ export default function App() {
   }, [])
 
   function handlePing() {
-    setPingCount((n) => n + 1)
-    setLastPing(formatTime(new Date()))
+    if (pinging) return
+    setPinging(true)
+    window.setTimeout(() => {
+      setPingCount((n) => n + 1)
+      setLastPing(formatTime(new Date()))
+      setPinging(false)
+    }, 400)
   }
 
   return (
@@ -53,14 +68,23 @@ export default function App() {
           <p className="eyebrow">SG-IMS · 测试环境</p>
           <h1>库存管理测试界面</h1>
           <p className="subtitle">
-            用于验证 GitHub → Vercel 自动部署链路。推送 <code>main</code> 分支后应触发新版本构建。
+            线上地址{' '}
+            <a href={SITE_URL} target="_blank" rel="noreferrer">
+              sgims.huozzz1123.top
+            </a>
+            。推送 <code>main</code> 分支将触发 Vercel 自动构建。
           </p>
         </div>
         <div className="hero-card">
           <span className="badge live">LIVE</span>
           <p className="deploy-label">部署探测</p>
-          <button type="button" className="btn primary" onClick={handlePing}>
-            模拟 API 心跳
+          <button
+            type="button"
+            className="btn primary"
+            onClick={handlePing}
+            disabled={pinging}
+          >
+            {pinging ? '请求中…' : '模拟 API 心跳'}
           </button>
           <p className="meta">
             心跳次数：<strong>{pingCount}</strong>
@@ -84,15 +108,19 @@ export default function App() {
         </article>
         <article>
           <p>构建版本</p>
-          <strong>v0.1.0-test</strong>
+          <strong>{APP_VERSION}</strong>
         </article>
       </section>
 
       <section className="panel">
         <div className="panel-head">
-          <h2>库存列表（Mock）</h2>
+          <div className="panel-title">
+            <h2>库存列表（Mock）</h2>
+            <span className="result-count">共 {filtered.length} 条</span>
+          </div>
           <input
             type="search"
+            aria-label="搜索库存"
             placeholder="搜索 SKU / 名称 / 库位…"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -116,7 +144,7 @@ export default function App() {
                   <td><code>{item.id}</code></td>
                   <td>{item.name}</td>
                   <td>{item.warehouse}</td>
-                  <td>{item.qty}</td>
+                  <td className={qtyClass(item.qty)}>{item.qty}</td>
                   <td>
                     <span className={`pill ${STATUS_CLASS[item.status]}`}>
                       {item.status}
@@ -135,9 +163,13 @@ export default function App() {
       </section>
 
       <footer className="footer">
-        <span>SG-IMS Test UI</span>
+        <span>SG-IMS {APP_VERSION}</span>
         <span>·</span>
-        <span>Vercel 自动部署验证页</span>
+        <a href={SITE_URL} target="_blank" rel="noreferrer">
+          sgims.huozzz1123.top
+        </a>
+        <span>·</span>
+        <span>Vercel 自动部署</span>
       </footer>
     </div>
   )

@@ -39,6 +39,17 @@ h1 {
   max-width: 42ch;
 }
 
+.subtitle a,
+.footer a {
+  color: #7dd3fc;
+  text-decoration: none;
+}
+
+.subtitle a:hover,
+.footer a:hover {
+  text-decoration: underline;
+}
+
 .subtitle code {
   background: #151c2b;
   padding: 0.1rem 0.4rem;
@@ -88,8 +99,13 @@ h1 {
   box-shadow: 0 10px 30px rgba(56, 189, 248, 0.25);
 }
 
-.btn.primary:hover {
+.btn.primary:hover:not(:disabled) {
   transform: translateY(-1px);
+}
+
+.btn.primary:disabled {
+  opacity: 0.7;
+  cursor: wait;
 }
 
 .meta {
@@ -150,9 +166,21 @@ h1 {
   border-bottom: 1px solid #243049;
 }
 
+.panel-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem 0.75rem;
+}
+
 .panel-head h2 {
   margin: 0;
   font-size: 1.05rem;
+}
+
+.result-count {
+  font-size: 0.82rem;
+  color: #64748b;
 }
 
 .panel-head input {
@@ -201,6 +229,16 @@ tbody tr:hover {
 td code {
   font-size: 0.85em;
   color: #7dd3fc;
+}
+
+.qty-low {
+  color: #fbbf24;
+  font-weight: 600;
+}
+
+.qty-zero {
+  color: #f87171;
+  font-weight: 600;
 }
 
 .pill {
