@@ -5,12 +5,20 @@
 }
 
 :root {
-  color-scheme: dark;
-  font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+  color-scheme: light;
+  font-family: 'PingFang SC', 'Microsoft YaHei', system-ui, -apple-system, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-  color: #e8edf5;
-  background: #0b0f17;
+  color: #333;
+  background: #f5f5f5;
+  --brand: #ff5000;
+  --brand-dark: #e64500;
+  --brand-light: #fff7f2;
+  --text: #333;
+  --text-muted: #999;
+  --border: #eee;
+  --card: #fff;
+  --shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
 }
 
 body {
@@ -22,4 +30,8 @@ button,
 input,
 select {
   font: inherit;
+}
+
+a {
+  color: inherit;
 }
