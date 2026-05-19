@@ -1,84 +1,9 @@
 import { useMemo, useState } from 'react'
+import { CATEGORIES, INVENTORY_PRODUCTS, STATUS_STYLE } from './data/products'
 import './App.css'
 
-const CATEGORIES = ['全部', '网络设备', '机房配件', '环境监测']
-
-const MOCK_PRODUCTS = [
-  {
-    id: 'SKU-001',
-    name: '光纤收发模块 SFP+ 10G',
-    category: '网络设备',
-    warehouse: 'A-01',
-    qty: 128,
-    status: '正常',
-    price: 289,
-    originalPrice: 359,
-    rating: 4.8,
-    sales: 1206,
-    emoji: '📡',
-  },
-  {
-    id: 'SKU-014',
-    name: '工业级千兆交换机 8口',
-    category: '网络设备',
-    warehouse: 'B-03',
-    qty: 42,
-    status: '正常',
-    price: 1299,
-    originalPrice: 1599,
-    rating: 4.9,
-    sales: 532,
-    emoji: '🔌',
-  },
-  {
-    id: 'SKU-027',
-    name: 'PDU 机柜电源分配单元',
-    category: '机房配件',
-    warehouse: 'A-02',
-    qty: 9,
-    status: '低库存',
-    price: 468,
-    originalPrice: 528,
-    rating: 4.6,
-    sales: 89,
-    emoji: '⚡',
-  },
-  {
-    id: 'SKU-033',
-    name: '标准机柜理线架 1U',
-    category: '机房配件',
-    warehouse: 'C-01',
-    qty: 0,
-    status: '缺货',
-    price: 89,
-    originalPrice: 119,
-    rating: 4.5,
-    sales: 2103,
-    emoji: '🗄️',
-  },
-  {
-    id: 'SKU-041',
-    name: '机房温湿度传感器',
-    category: '环境监测',
-    warehouse: 'B-01',
-    qty: 76,
-    status: '正常',
-    price: 198,
-    originalPrice: 238,
-    rating: 4.7,
-    sales: 876,
-    emoji: '🌡️',
-  },
-]
-
-const STATUS_LABEL = {
-  正常: { className: 'tag-ok', text: '现货' },
-  低库存: { className: 'tag-warn', text: '仅剩少量' },
-  缺货: { className: 'tag-sold', text: '暂时缺货' },
-}
-
-const APP_VERSION = 'v0.2.0'
 const SITE_URL = 'https://sgims.huozzz1123.top'
+const CONTACT_HINT = '欢迎来电或邮件咨询采购与报价'
 
 function formatPrice(n) {
   return n.toLocaleString('zh-CN')
@@ -87,99 +12,116 @@ function formatPrice(n) {
 export default function App() {
   const [query, setQuery] = useState('')
   const [category, setCategory] = useState('全部')
-  const [cartCount, setCartCount] = useState(0)
-  const [toast, setToast] = useState('')
+  const [selected, setSelected] = useState(null)
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
-    return MOCK_PRODUCTS.filter((item) => {
+    return INVENTORY_PRODUCTS.filter((item) => {
       const matchCat = category === '全部' || item.category === category
       const matchQ =
         !q ||
         item.id.toLowerCase().includes(q) ||
         item.name.toLowerCase().includes(q) ||
-        item.category.toLowerCase().includes(q)
+        item.model.toLowerCase().includes(q) ||
+        item.category.toLowerCase().includes(q) ||
+        item.desc.toLowerCase().includes(q)
       return matchCat && matchQ
     })
   }, [query, category])
 
-  function showToast(msg) {
-    setToast(msg)
-    window.setTimeout(() => setToast(''), 2200)
-  }
-
-  function addToCart(item) {
-    if (item.status === '缺货') {
-      showToast('该商品暂时缺货')
-      return
+  const overview = useMemo(() => {
+    const inStock = INVENTORY_PRODUCTS.filter((p) => p.status === '现货').length
+    const totalQty = INVENTORY_PRODUCTS.reduce((s, p) => s + p.qty, 0)
+    return {
+      total: INVENTORY_PRODUCTS.length,
+      inStock,
+      totalQty,
+      categories: CATEGORIES.length - 1,
     }
-    setCartCount((n) => n + 1)
-    showToast(`已加入购物车：${item.name}`)
-  }
+  }, [])
+
+  const featured = useMemo(
+    () => INVENTORY_PRODUCTS.filter((p) => p.highlight).slice(0, 3),
+    [],
+  )
 
   return (
-    <div className="mall">
-      {toast && <div className="toast">{toast}</div>}
-
-      <header className="mall-header">
+    <div className="showcase">
+      <header className="site-header">
         <div className="header-inner">
           <div className="brand">
             <span className="logo">SG</span>
             <div>
-              <strong>SG-IMS 商城</strong>
-              <span className="slogan">工业品供应链</span>
+              <strong>SG-IMS 产品展厅</strong>
+              <span className="slogan">库存现货 · 宣传展示</span>
             </div>
           </div>
-
           <div className="search-bar">
             <input
               type="search"
-              aria-label="搜索商品"
-              placeholder="搜索商品、SKU、品类…"
+              aria-label="搜索产品"
+              placeholder="搜索品名、型号、SKU、品类…"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
             />
-            <button type="button" className="search-btn">
-              搜索
-            </button>
+            <button type="button" className="search-btn">搜索</button>
           </div>
-
-          <div className="header-actions">
-            <button type="button" className="cart-btn" aria-label="购物车">
-              🛒
-              {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
-            </button>
-          </div>
+          <a className="header-cta" href="#contact">
+            咨询采购
+          </a>
         </div>
       </header>
 
-      <section className="promo-banner">
-        <div className="promo-inner">
-          <div className="promo-text">
-            <span className="promo-tag">限时特惠</span>
-            <h1>机房好物节</h1>
-            <p>网络设备 · 机房配件 · 环境监测 一站采购</p>
-            <span className="promo-meta">{APP_VERSION} · 库存实时同步</span>
+      <section className="hero">
+        <div className="hero-inner">
+          <div className="hero-copy">
+            <span className="hero-badge">Inventory Showcase</span>
+            <h1>库存产品在线展厅</h1>
+            <p>
+              集中展示仓库现货与可售 SKU，客户可浏览型号、规格、库存与参考价，
+              便于对外宣传与售前沟通。
+            </p>
+            <div className="hero-stats">
+              <div>
+                <strong>{overview.total}</strong>
+                <span>在售 SKU</span>
+              </div>
+              <div>
+                <strong>{overview.inStock}</strong>
+                <span>现货品类</span>
+              </div>
+              <div>
+                <strong>{overview.totalQty}</strong>
+                <span>库存总量</span>
+              </div>
+              <div>
+                <strong>{overview.categories}</strong>
+                <span>产品大类</span>
+              </div>
+            </div>
           </div>
-          <div className="promo-deals">
-            <div className="deal-card">
-              <em>满减</em>
-              <span>满 999 减 80</span>
-            </div>
-            <div className="deal-card">
-              <em>包邮</em>
-              <span>指定 SKU 包邮</span>
-            </div>
-            <div className="deal-card highlight">
-              <em>热销</em>
-              <span>{MOCK_PRODUCTS.length} 款在售</span>
-            </div>
+          <div className="hero-visual">
+            <p className="visual-title">本周推荐</p>
+            {featured.map((p) => (
+              <button
+                key={p.id}
+                type="button"
+                className="featured-item"
+                onClick={() => setSelected(p)}
+              >
+                <span>{p.emoji}</span>
+                <div>
+                  <strong>{p.name}</strong>
+                  <small>{p.highlight} · 库存 {p.qty}{p.unit}</small>
+                </div>
+              </button>
+            ))}
           </div>
         </div>
       </section>
 
-      <main className="mall-main">
-        <nav className="category-nav" aria-label="商品分类">
+      <main className="catalog">
+        <nav className="category-nav" aria-label="产品分类">
           {CATEGORIES.map((cat) => (
             <button
               key={cat}
@@ -194,25 +136,15 @@ export default function App() {
 
         <div className="toolbar">
           <h2>
-            {category === '全部' ? '全部商品' : category}
-            <span className="count">（{filtered.length} 件）</span>
+            {category === '全部' ? '全部库存产品' : category}
+            <span className="count">共 {filtered.length} 款</span>
           </h2>
-          <select
-            className="sort-select"
-            defaultValue="default"
-            aria-label="排序方式"
-          >
-            <option value="default">综合排序</option>
-            <option value="sales">销量优先</option>
-            <option value="price-asc">价格从低到高</option>
-            <option value="price-desc">价格从高到低</option>
-          </select>
         </div>
 
         {filtered.length === 0 ? (
           <div className="empty-state">
             <span className="empty-icon">📦</span>
-            <p>没有找到相关商品</p>
+            <p>未找到匹配产品</p>
             <button
               type="button"
               className="btn-outline"
@@ -221,71 +153,149 @@ export default function App() {
                 setCategory('全部')
               }}
             >
-              查看全部商品
+              查看全部产品
             </button>
           </div>
         ) : (
           <div className="product-grid">
-            {filtered.map((item) => {
-              const tag = STATUS_LABEL[item.status]
-              const soldOut = item.status === '缺货'
-              return (
-                <article key={item.id} className="product-card">
-                  <div className="card-thumb">
-                    <span className="thumb-emoji">{item.emoji}</span>
-                    <span className={`stock-tag ${tag.className}`}>{tag.text}</span>
-                    {item.status === '低库存' && (
-                      <span className="flash-tag">抢购</span>
-                    )}
-                  </div>
-                  <div className="card-body">
-                    <p className="card-cat">{item.category}</p>
-                    <h3 className="card-title">{item.name}</h3>
-                    <p className="card-meta">
-                      <span className="stars">★ {item.rating}</span>
-                      <span>已售 {item.sales}</span>
-                      <span>库位 {item.warehouse}</span>
-                    </p>
-                    <div className="price-row">
+            {filtered.map((item) => (
+              <article key={item.id} className="product-card">
+                <div className={`card-thumb cat-${STATUS_STYLE[item.status]}`}>
+                  <span className="thumb-emoji">{item.emoji}</span>
+                  {item.highlight && (
+                    <span className="highlight-tag">{item.highlight}</span>
+                  )}
+                  <span className={`stock-tag tag-${STATUS_STYLE[item.status]}`}>
+                    {item.status}
+                  </span>
+                </div>
+                <div className="card-body">
+                  <p className="card-cat">{item.category}</p>
+                  <h3 className="card-title">{item.name}</h3>
+                  <p className="card-model">型号 {item.model}</p>
+                  <p className="card-desc">{item.desc}</p>
+                  <ul className="spec-tags">
+                    {item.specs.map((s) => (
+                      <li key={s}>{s}</li>
+                    ))}
+                  </ul>
+                  <div className="card-footer">
+                    <div>
                       <span className="price">
-                        <small>¥</small>
+                        <small>参考价 ¥</small>
                         {formatPrice(item.price)}
                       </span>
-                      <span className="price-old">¥{formatPrice(item.originalPrice)}</span>
+                      <span className="unit">/{item.unit}</span>
                     </div>
-                    <p className="sku-line">
+                    <p className="inventory-line">
                       <code>{item.id}</code>
-                      <span>库存 {item.qty}</span>
+                      <span>库位 {item.warehouse}</span>
+                      <span className="qty">库存 {item.qty}</span>
                     </p>
-                    <button
-                      type="button"
-                      className={`btn-cart ${soldOut ? 'disabled' : ''}`}
-                      disabled={soldOut}
-                      onClick={() => addToCart(item)}
-                    >
-                      {soldOut ? '补货中' : '加入购物车'}
-                    </button>
                   </div>
-                </article>
-              )
-            })}
+                  <button
+                    type="button"
+                    className="btn-detail"
+                    onClick={() => setSelected(item)}
+                  >
+                    查看详情
+                  </button>
+                </div>
+              </article>
+            ))}
           </div>
         )}
       </main>
 
-      <footer className="mall-footer">
-        <div className="footer-links">
-          <span>关于我们</span>
-          <span>配送说明</span>
-          <span>售后服务</span>
-          <a href={SITE_URL} target="_blank" rel="noreferrer">
-            {SITE_URL.replace('https://', '')}
-          </a>
+      <section className="contact" id="contact">
+        <div className="contact-inner">
+          <h2>采购咨询</h2>
+          <p>{CONTACT_HINT}</p>
+          <div className="contact-cards">
+            <div>
+              <span>📞</span>
+              <strong>400-XXX-XXXX</strong>
+              <small>工作日 9:00–18:00</small>
+            </div>
+            <div>
+              <span>✉️</span>
+              <strong>sales@sg-ims.example</strong>
+              <small>24 小时内回复</small>
+            </div>
+            <div>
+              <span>🌐</span>
+              <a href={SITE_URL} target="_blank" rel="noreferrer">
+                sgims.huozzz1123.top
+              </a>
+              <small>在线产品展厅</small>
+            </div>
+          </div>
         </div>
-        <p className="footer-copy">
-          © SG-IMS 工业品商城 {APP_VERSION} · Mock 数据仅供演示 · Vercel 自动部署
-        </p>
+      </section>
+
+      <footer className="site-footer">
+        <p>© SG-IMS 库存产品展厅 · 数据为演示库存，仅供宣传展示</p>
       </footer>
+
+      {selected && (
+        <div
+          className="modal-backdrop"
+          role="presentation"
+          onClick={() => setSelected(null)}
+        >
+          <div
+            className="modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="modal-title"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              className="modal-close"
+              aria-label="关闭"
+              onClick={() => setSelected(null)}
+            >
+              ×
+            </button>
+            <div className="modal-thumb">{selected.emoji}</div>
+            <div className="modal-body">
+              <span className={`stock-tag tag-${STATUS_STYLE[selected.status]}`}>
+                {selected.status}
+              </span>
+              <h2 id="modal-title">{selected.name}</h2>
+              <p className="modal-model">
+                {selected.id} · 型号 {selected.model} · {selected.category}
+              </p>
+              <p className="modal-desc">{selected.desc}</p>
+              <ul className="modal-specs">
+                {selected.specs.map((s) => (
+                  <li key={s}>{s}</li>
+                ))}
+              </ul>
+              <div className="modal-meta">
+                <div>
+                  <em>参考价</em>
+                  <strong>¥{formatPrice(selected.price)}</strong>
+                  <span>/{selected.unit}</span>
+                </div>
+                <div>
+                  <em>库存</em>
+                  <strong>{selected.qty}</strong>
+                  <span>{selected.unit}</span>
+                </div>
+                <div>
+                  <em>库位</em>
+                  <strong>{selected.warehouse}</strong>
+                </div>
+              </div>
+              <a className="btn-inquiry" href="#contact" onClick={() => setSelected(null)}>
+                咨询此款产品的报价与交期
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
