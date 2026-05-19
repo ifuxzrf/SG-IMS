@@ -1,0 +1,243 @@
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 3rem;
+}
+
+.hero {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: 1fr;
+  margin-bottom: 2rem;
+}
+
+@media (min-width: 860px) {
+  .hero {
+    grid-template-columns: 1.2fr 0.8fr;
+    align-items: start;
+  }
+}
+
+.eyebrow {
+  margin: 0 0 0.5rem;
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #7dd3fc;
+}
+
+h1 {
+  margin: 0 0 0.75rem;
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  margin: 0;
+  color: #9aa8bd;
+  max-width: 42ch;
+}
+
+.subtitle code {
+  background: #151c2b;
+  padding: 0.1rem 0.4rem;
+  border-radius: 0.35rem;
+  color: #c4d4ef;
+}
+
+.hero-card {
+  background: linear-gradient(145deg, #121a2a 0%, #0f1522 100%);
+  border: 1px solid #243049;
+  border-radius: 1rem;
+  padding: 1.25rem 1.35rem;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+}
+
+.badge.live {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 0.25rem 0.55rem;
+  border-radius: 999px;
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+  border: 1px solid rgba(74, 222, 128, 0.35);
+}
+
+.deploy-label {
+  margin: 0.75rem 0 0.5rem;
+  color: #9aa8bd;
+  font-size: 0.9rem;
+}
+
+.btn {
+  border: none;
+  border-radius: 0.65rem;
+  padding: 0.65rem 1rem;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.btn.primary {
+  width: 100%;
+  background: linear-gradient(135deg, #38bdf8, #6366f1);
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 10px 30px rgba(56, 189, 248, 0.25);
+}
+
+.btn.primary:hover {
+  transform: translateY(-1px);
+}
+
+.meta {
+  margin: 0.85rem 0 0;
+  font-size: 0.85rem;
+  color: #8b9ab3;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.85rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (min-width: 720px) {
+  .stats {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.stats article {
+  background: #111827;
+  border: 1px solid #1f2937;
+  border-radius: 0.85rem;
+  padding: 1rem 1.1rem;
+}
+
+.stats p {
+  margin: 0 0 0.35rem;
+  color: #8b9ab3;
+  font-size: 0.85rem;
+}
+
+.stats strong {
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.warn-num {
+  color: #fbbf24;
+}
+
+.panel {
+  background: #0f1522;
+  border: 1px solid #243049;
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.panel-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.1rem;
+  border-bottom: 1px solid #243049;
+}
+
+.panel-head h2 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.panel-head input {
+  min-width: min(100%, 260px);
+  flex: 1;
+  padding: 0.55rem 0.75rem;
+  border-radius: 0.55rem;
+  border: 1px solid #334155;
+  background: #0b1220;
+  color: #e8edf5;
+}
+
+.panel-head input:focus {
+  outline: 2px solid #38bdf8;
+  outline-offset: 1px;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 0.85rem 1.1rem;
+  text-align: left;
+  border-bottom: 1px solid #1e293b;
+}
+
+th {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #8b9ab3;
+  background: #0c1320;
+}
+
+tbody tr:hover {
+  background: rgba(56, 189, 248, 0.04);
+}
+
+td code {
+  font-size: 0.85em;
+  color: #7dd3fc;
+}
+
+.pill {
+  display: inline-block;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.pill.ok {
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+}
+
+.pill.warn {
+  background: rgba(251, 191, 36, 0.15);
+  color: #fbbf24;
+}
+
+.pill.danger {
+  background: rgba(248, 113, 113, 0.15);
+  color: #f87171;
+}
+
+.empty {
+  text-align: center;
+  color: #8b9ab3;
+  padding: 2rem !important;
+}
+
+.footer {
+  margin-top: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  color: #64748b;
+  font-size: 0.85rem;
+}
